@@ -1,7 +1,17 @@
-s3s 🦑
+s3s 🦑 with misskey support
 =====
 
 **s3s** is a script that uploads _Splatoon 3_ battle data from the SplatNet 3 service (part of the Nintendo Switch Online app) to [stat.ink](https://stat.ink/), a site for recording, visualizing, and aggregating statistics from the *Splatoon* series of games.
+
+本レポジトリは、s3sに、データをアップロードするのと同時にMisskeyでノートを送信できるようにするアレンジを加えたレポジトリです。
+#### 機能:
+ - [x] Misskeyサーバーへのログインができます。（設定ファイル`misskey.json`が見つからない場合のみ）
+ - [x] ナワバリバトル/バンカラマッチの検出時に、MisskeyのAPIを叩いてノートを投稿することができます。
+ - [ ] バイトの結果はアップロードできません。
+ - [ ] トリカラバトルの結果はノートできません。
+ - [ ] フェスマッチの動作確認はできていません。
+ - [ ] Misskeyに投稿する機能を無効化するオプションなどはまだできていません。
+ - [ ] MisskeyのAPIのトークンが失効した際の例外処理が実装されていません。
 
 (ja) 日本語版セットアップ手順は[こちら](https://vanillasalt.net/2022/10/10/how-to-use-s3s/)、または[こちら](https://zenn.dev/hibikine/articles/1febb4eb03b604)。
 
@@ -17,6 +27,7 @@ Looking to track your _Splatoon 2_ gameplay? See **[splatnet2statink](https://gi
  - [x] File exporting function for use with Lean's [gear & Shell-Out Machine seed checker](https://leanny.github.io/splat3seedchecker/)
  - [x] Support for all available game languages
  - [x] Modular design to support [IkaLog3](https://github.com/hasegaw/IkaLog3) and other tools
+ - [x] Automatically send notes to Misskey server via API
 
 ### What's coming?
  - [ ] Downloadable, pre-packaged program executables

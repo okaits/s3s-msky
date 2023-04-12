@@ -11,6 +11,10 @@ import msgpack
 from packaging import version
 import iksm, utils
 
+### MODULES ###
+import misskey_note
+modules_list = [misskey_note.Module()] # modules list
+
 A_VERSION = "0.3.4"
 
 DEBUG = False
@@ -1150,6 +1154,10 @@ def post_result(data, ismonitoring, isblackout, istestrun, overview_data=None):
 			results = data["results"]
 		except KeyError:
 			results = [data] # single battle/job - make into a list
+
+	# modules
+	for module in modules_list:
+		module.send(results)
 
 	# filter down to one battle at a time
 	for i in range(len(results)):
