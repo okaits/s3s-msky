@@ -36,6 +36,7 @@ class Module():
                 assists = me["result"]["assist"]
                 deaths = me["result"]["death"]
                 specials = me["result"]["special"]
+                weapon = me["weapon"]["name"]
             except KeyError:
                 me = {}
                 kills = 0
@@ -73,6 +74,7 @@ class Module():
             elif judgement is False and disconnected is True:
                 msg += "結果: 敗北（切断）\n"
             if disconnected is False or judgement is True:
+                msg += f"ブキ: {weapon}\n"
                 msg += f"ジャッジ: {judge_good_guys} 対 {judge_bad_guys}\n"
                 msg += f'キル数: {kills}\n'
                 msg += f'アシスト数: {assists}\n'
