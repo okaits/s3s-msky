@@ -35,7 +35,9 @@ class Module():
                 #TODO
                 raise Exception("Not implemented.")
             try:
-                me = data["myTeam"]["players"][0]
+                for player in data["myTeam"]["players"]:
+                    if player["isMyself"] is True:
+                        me = player
                 kills = me["result"]["kill"]
                 assists = me["result"]["assist"]
                 deaths = me["result"]["death"]
