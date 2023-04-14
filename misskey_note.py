@@ -85,7 +85,10 @@ class Module():
             if disconnected is False or judgement is True:
                 msg += f"塗りポイント: {points}\n"
                 msg += f"ブキ: {weapon}\n"
-                msg += f"ジャッジ: {judge_good_guys} 対 {judge_bad_guys}\n"
+                if judge_good_guys == "100" or judge_bad_guys == "100":
+                    msg += "ジャッジ: ノックアウト！\n"
+                else:
+                    msg += f"ジャッジ: {judge_good_guys} 対 {judge_bad_guys}\n"
                 msg += f'キル数: {kills}\n'
                 msg += f'アシスト数: {assists}\n'
                 msg += f'デス数: {deaths}\n'
