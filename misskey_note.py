@@ -43,6 +43,7 @@ class Module():
                 deaths = me["result"]["death"]
                 specials = me["result"]["special"]
                 weapon = me["weapon"]["name"]
+                points = me["paint"]
             except KeyError:
                 me = {}
                 kills = 0
@@ -68,6 +69,7 @@ class Module():
                 else:
                     judge_good_guys = str(data["myTeam"]["result"]["score"]) + "カウント"
                     judge_bad_guys = str(data["otherTeams"][0]["result"]["score"]) + "カウント"
+            stage = data["vsStage"]["name"]
             msg = "Splatoon3: バトルが検出されました。\n"
             msg += f"日時: {time}\n"
             msg += f"種別: {gametype}\n"
@@ -79,7 +81,9 @@ class Module():
                 msg += "結果: 引き分け\n"
             elif judgement is False and disconnected is True:
                 msg += "結果: 敗北（切断）\n"
+            msg += f"ステージ: {stage}\n"
             if disconnected is False or judgement is True:
+                msg += f"塗りポイント: {points}\n"
                 msg += f"ブキ: {weapon}\n"
                 msg += f"ジャッジ: {judge_good_guys} 対 {judge_bad_guys}\n"
                 msg += f'キル数: {kills}\n'
