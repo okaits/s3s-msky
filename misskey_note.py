@@ -4,6 +4,10 @@ import dateutil.parser as dateparser
 import dateutil.tz as datetz
 import misskey  # pylint: disable=E0401
 
+salmon_sp_codes = {"Triple Inkstrike": "トリプルトルネード", "Crab Tank": "カニタンク", "Booyah Bomb": "ナイスダマ", "Killer Wail 5.1": "メガホンレーザー5.1ch", "Inkjet": "ジェットパック", "Reefslider": "サメライド", "Wave Breaker": "ホップソナー"}
+salmon_rate_codes = {"Apprentice": "かけだし", "Part-Timer": "はんにんまえ", "Profeshional": "たつじん", "Profeshional +1": "たつじん +1", "Profeshional +2": "たつじん +2", "Profeshional +3": "たつじん +3", "Go-Getter": "いちにんまえ", "Overachiver": "じゅくれん", "Eggsecutive VP": "でんせつ"}
+salmon_event_wave_codes = {"Rush": "ヒカリバエ（ラッシュ）", "Goldie Seeking": "金シャケ探し", "The Griller": "グリル", "The Mothership": "ハコビヤ襲来", "Fog": "霧", "Cohock Charge": "ドスコイの群れ", "Giant Tornado": "竜巻", "Mudmouth Eruptions": "ドロシャケ"}
+
 class Module():
     """ Initial class """
     def __init__(self):
@@ -84,12 +88,82 @@ class Module():
                 msg += "\n対戦相手/味方が切断したため、負けとしてカウントされませんでした。"
             elif disconnected is True and judgement is False:
                 msg += "\n自分が切断したため、負けとしてカウントされました。"
-            #self.api.notes_create(text=msg)
-            print(msg)
+            elif judgement is None:
+                msg += "\n対戦相手/味方が開始一分以内に切断したため、無効試合となりました。"
+            self.api.notes_create(text=msg)
+            #print(msg)
         elif "coopHistoryDetail" in data[0]["data"]:
+            data = data[0]["data"]["coopHistoryDetail"]
+            time = dateparser.isoparse(data["playedTime"]).astimezone(tz=datetz.gettz("Asia/Tokyo")).strftime("%Y/%m/%d %H:%M:%S JST (24時間表記)")
+            gametype = data["rule"]
+            if gametype == "REGULAR":
+                gametype = "普通"
+            else:
+                gametype = f"不明 ({gametype})"
+            danger = data["dangerRate"]
+            special = salmon_sp_codes[data["myResult"]["specialWeapon"]["name"]]
+            afterrate = salmon_rate_codes[data["afterGrade"]["name"]] + " " + str(data["afterGradePoint"])
+            waves = {}
+            alleggs = 0
+            for wave in data["waveResults"]:
+                waves[wave["waveNumber"]] = {}
+                waves[wave["waveNumber"]]["wave"] = wave["waveNumber"]
+                waves[wave["waveNumber"]]["ikura_norms"] = wave["deliverNorm"]
+                waves[wave["waveNumber"]]["ikura_number"] = wave["teamDeliverCount"]
+                if wave["teamDeliverCount"] is not None:
+                    alleggs += wave["teamDeliverCount"]
+                if wave["eventWave"] is not None:
+                    waves[wave["waveNumber"]]["event"] = salmon_event_wave_codes[wave["eventWave"]["name"]]
+                elif data["bossResult"] is not None and data["bossResult"]["hasDefeatBoss"] is True and wave["waveNumber"] == 4:
+                    waves[wave["waveNumber"]]["event"] = "オカシラ襲来（討伐成功）"
+                    waves[wave["waveNumber"]]["ikura_norms"] = "n/a"
+                    waves[wave["waveNumber"]]["ikura_number"] = "n/a"
+                elif data["bossResult"] is not None and wave["waveNumber"] == 4:
+                    waves[wave["waveNumber"]]["event"] = "オカシラ襲来（討伐失敗）"
+                    waves[wave["waveNumber"]]["ikura_norms"] = "n/a"
+                    waves[wave["waveNumber"]]["ikura_number"] = "n/a"
+                else:
+                    waves[wave["waveNumber"]]["event"] = "通常"
+                if data["resultWave"] == wave["waveNumber"]:
+                    if wave["deliverNorm"] < wave["teamDeliverCount"]:
+                        waves[wave["waveNumber"]]["failedreason"] = "全滅"
+                    else:
+                        waves[wave["waveNumber"]]["failedreason"] = "納品不足または全滅"
+            if data["resultWave"] == 0:
+                failed = False
+                disconnected = False
+                waves_num = "3+"
+            elif data["resultWave"] < 0:
+                failed = True
+                disconnected = True
+            else:
+                failed = True
+                waves_num = data["resultWave"]
+                disconnected = False
             msg = "Splatoon3: バイト結果が検出されました。\n"
-            # TODO
-            raise Exception("Not implemented.")
+            msg += f"日時: {time}\n"
+            msg += f"種別: {gametype}\n"
+            msg += f"スペシャルウェポン: {special}\n"
+            msg += f"終了後レート: {afterrate}\n"
+            msg += f"キケン度: {round(danger * 100, 1)}%\n"
+            if failed is True:
+                msg += "結果: 失敗\n"
+            elif failed is False:
+                msg += "結果: 成功\n"
+            msg += f"合計納品数: {alleggs}個\n"
+            msg += f"到達ウェーブ: {waves_num}\n"
+            for wave in waves.values():
+                msg += f'ウェーブ{wave["wave"]}:\n'
+                msg += f'    ノルマ: {wave["ikura_norms"]}個\n'
+                msg += f'    納品数: {wave["ikura_number"]}個\n'
+                msg += f'    種別: {wave["event"]}\n'
+                if wave["wave"] == waves_num and failed is True:
+                    msg += f'    失敗理由: {wave["failedreason"]}\n'
+            if disconnected is True:
+                msg += "\n自分が切断したため、WAVE1失敗としてカウントされました。\n"
+            self.api.notes_create(text=msg)
+            #print(msg)
+
 
     def _create_config(self):
         """ Ask user to enter server URL and api key. """
