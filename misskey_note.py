@@ -7,6 +7,7 @@ import misskey  # pylint: disable=E0401
 salmon_sp_codes = {"Triple Inkstrike": "トリプルトルネード", "Crab Tank": "カニタンク", "Booyah Bomb": "ナイスダマ", "Killer Wail 5.1": "メガホンレーザー5.1ch", "Inkjet": "ジェットパック", "Reefslider": "サメライド", "Wave Breaker": "ホップソナー"}
 salmon_rate_codes = {"Apprentice": "かけだし", "Part-Timer": "はんにんまえ", "Profeshional": "たつじん", "Profeshional +1": "たつじん +1", "Profeshional +2": "たつじん +2", "Profeshional +3": "たつじん +3", "Go-Getter": "いちにんまえ", "Overachiver": "じゅくれん", "Eggsecutive VP": "でんせつ"}
 salmon_event_wave_codes = {"Rush": "ヒカリバエ（ラッシュ）", "Goldie Seeking": "金シャケ探し", "The Griller": "グリル", "The Mothership": "ハコビヤ襲来", "Fog": "霧", "Cohock Charge": "ドスコイの群れ", "Giant Tornado": "竜巻", "Mudmouth Eruptions": "ドロシャケ"}
+salmon_gametype_codes = {"GENERAL": "通常", "TEAM_CONTEST": "バイトチームコンテスト"}
 
 class Module():
     """ Initial class """
@@ -104,14 +105,13 @@ class Module():
         elif "coopHistoryDetail" in data[0]["data"]:
             data = data[0]["data"]["coopHistoryDetail"]
             time = dateparser.isoparse(data["playedTime"]).astimezone(tz=datetz.gettz("Asia/Tokyo")).strftime("%Y/%m/%d %H:%M:%S JST (24時間表記)")
-            gametype = data["rule"]
-            if gametype == "REGULAR":
-                gametype = "普通"
-            else:
-                gametype = f"不明 ({gametype})"
+            gametype = salmon_gametype_codes[data["rule"]]
             danger = data["dangerRate"]
             special = salmon_sp_codes[data["myResult"]["specialWeapon"]["name"]]
-            afterrate = salmon_rate_codes[data["afterGrade"]["name"]] + " " + str(data["afterGradePoint"])
+            try:
+                afterrate = salmon_rate_codes[data["afterGrade"]["name"]] + " " + str(data["afterGradePoint"])
+            except TypeError:
+                afterrate = "-"
             waves = {}
             alleggs = 0
             for wave in data["waveResults"]:
