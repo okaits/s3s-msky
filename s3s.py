@@ -1161,7 +1161,7 @@ def post_result(data, ismonitoring, isblackout, istestrun, overview_data=None):
 
 	# modules
 	for module in modules_list:
-		module.send(results)
+		module.pre(results)
 
 	# filter down to one battle at a time
 	for i in range(len(results)):
@@ -1236,6 +1236,9 @@ def post_result(data, ismonitoring, isblackout, istestrun, overview_data=None):
 			print(f"{utils.set_noun(which)[:-1].capitalize()} already uploaded - {headerloc}")
 		else: # 200 OK
 			print(f"{utils.set_noun(which)[:-1].capitalize()} uploaded to {headerloc}")
+	# modules
+	for module in modules_list:
+		module.post(results, headerloc)
 
 
 def check_for_updates():

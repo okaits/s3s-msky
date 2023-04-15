@@ -27,7 +27,10 @@ class Module():
             self._create_config()
         self.api = misskey.Misskey(address=self.server, i=self.api_token)
 
-    def send(self, data: list):
+    def pre(self, result):
+        pass
+
+    def post(self, data: list, url: str):
         """ Note to misskey server """
         if "vsHistoryDetail" in data[0]["data"]:
             data = data[0]["data"]["vsHistoryDetail"]
@@ -176,6 +179,8 @@ class Module():
                     msg += f'    失敗理由: {wave["failedreason"]}\n'
             if disconnected is True:
                 msg += "\n自分が切断したため、WAVE1失敗としてカウントされました。\n"
+            if url is not None:
+                msg += f"\n[バトル詳細はこちら]({url})"
             self.api.notes_create(text=msg)
             #print(msg)
 
