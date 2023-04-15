@@ -906,8 +906,12 @@ def prepare_job_result(job, ismonitoring, isblackout, overview_data=None, prevre
 
 	# https://stat.ink/api-info/salmon-title3
 	if not is_private:
-		payload["title_after"]     = utils.b64d(job["afterGrade"]["id"])
-		payload["title_exp_after"] = job["afterGradePoint"]
+		try:
+			payload["title_after"]     = utils.b64d(job["afterGrade"]["id"])
+			payload["title_exp_after"] = job["afterGradePoint"]
+		except TypeError:
+			payload["title_after"]     = ""
+			payload["title_exp_after"] = ""
 
 		# never sure of points gained unless first job of rot - wave 3 clear is usu. +20, but 0 if playing w/ diff-titled friends
 		if job.get("previousHistoryDetail") != None:
