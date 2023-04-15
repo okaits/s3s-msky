@@ -141,7 +141,12 @@ class Module():
             if data["resultWave"] == 0:
                 failed = False
                 disconnected = False
-                waves_num = "3+"
+                if data["rule"] == "TEAM_CONTEST":
+                    waves_num = 5
+                elif 4 in waves:
+                    waves_num = 4
+                else:
+                    waves_num = "3"
             elif data["resultWave"] < 0:
                 failed = True
                 disconnected = True
