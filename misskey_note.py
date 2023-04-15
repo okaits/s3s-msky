@@ -3,6 +3,7 @@ import json
 import dateutil.parser as dateparser
 import dateutil.tz as datetz
 import misskey  # pylint: disable=E0401
+import os
 
 salmon_sp_codes = {"Triple Inkstrike": "トリプルトルネード", "Crab Tank": "カニタンク", "Booyah Bomb": "ナイスダマ", "Killer Wail 5.1": "メガホンレーザー5.1ch", "Inkjet": "ジェットパック", "Reefslider": "サメライド", "Wave Breaker": "ホップソナー"}
 salmon_rate_codes = {"Apprentice": "かけだし", "Part-Timer": "はんにんまえ", "Profeshional": "たつじん", "Profeshional +1": "たつじん +1", "Profeshional +2": "たつじん +2", "Profeshional +3": "たつじん +3", "Go-Getter": "いちにんまえ", "Overachiver": "じゅくれん", "Eggsecutive VP": "でんせつ"}
@@ -13,7 +14,7 @@ class Module():
     """ Initial class """
     def __init__(self):
         try:
-            with open("misskey.json", encoding="utf-8") as conf:
+            with open(f"{os.path.dirname(__file__)}/misskey.json", encoding="utf-8") as conf:
                 confdict = json.load(conf)
             try:
                 self.server = confdict["server"]
@@ -186,7 +187,7 @@ class Module():
         print(f"Please login into your server here: {auth.generate_url()}")
         input("Press Enter to continue.")
         self.api_token = auth.check()
-        with open("misskey.json", "w", encoding="utf-8") as conf:
+        with open(f"{os.path.dirname(__file__)}/misskey.json", "w", encoding="utf-8") as conf:
             conf.write(json.dumps({"server": self.server, "api_token": self.api_token}))
         print("Misskey server config done.")
         print("NOTE: Delete misskey.json to logout from your server.")
