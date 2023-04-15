@@ -188,3 +188,5 @@ class Module():
         self.api_token = auth.check()
         with open("misskey.json", "w", encoding="utf-8") as conf:
             conf.write(json.dumps({"server": self.server, "api_token": self.api_token}))
+        print("Misskey server config done.")
+        print("NOTE: Delete misskey.json to logout from your server.")
