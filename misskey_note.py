@@ -13,6 +13,8 @@ salmon_gametype_codes = {"REGULAR": "通常", "TEAM_CONTEST": "バイトチー�
 class Module():
     """ Initial class """
     def __init__(self):
+        print("Loaded module: misskey_note")
+        self.name = "misskey_note"
         try:
             with open(f"{os.path.dirname(__file__)}/misskey.json", encoding="utf-8") as conf:
                 confdict = json.load(conf)

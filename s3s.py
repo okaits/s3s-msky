@@ -13,7 +13,7 @@ import iksm, utils
 
 ### MODULES ###
 import misskey_note
-modules_list = [misskey_note.Module()] # modules list
+modules = [misskey_note] # modules list
 
 A_VERSION = "0.4.0"
 
@@ -1783,6 +1783,8 @@ def parse_arguments():
 	parser.add_argument("--getseed", required=False, action="store_true",
 		help="export JSON for gear & Shell-Out Machine seed checker")
 	parser.add_argument("--skipprefetch", required=False, action="store_true", help=argparse.SUPPRESS)
+	parser.add_argument("--skipmodule", required=False, action="append", default=[],
+		help="Skip module(s)")
 	return parser.parse_args()
 
 
@@ -1814,6 +1816,13 @@ def main():
 	file_paths   = parser_result.path         # intended for results/ or coop_results/ AND overview.json
 	outfile      = parser_result.o            # output to local files
 	skipprefetch = parser_result.skipprefetch # skip prefetch checks to ensure token validity
+
+	# init modules
+	global modules_list
+	modules_list = []
+	for module in modules:
+		if module.__name__ not in parser_result.skipmodule:
+			modules_list.append(module.Module())
 
 	# i/o checks
 	############
