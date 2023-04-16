@@ -78,34 +78,34 @@ class Module():
                     judge_bad_guys = str(data["otherTeams"][0]["result"]["score"]) + "カウント"
             stage = data["vsStage"]["name"]
             msg = "Splatoon3: バトルが検出されました。\n"
-            msg += f"日時: {time}\n"
-            msg += f"種別: {gametype}\n"
+            msg += f"日時: **{time}**\n"
+            msg += f"種別: **{gametype}**\n"
             if judgement is True:
-                msg += "結果: 勝利\n"
+                msg += "結果: **勝利**\n"
             elif judgement is False and disconnected is False:
-                msg += "結果: 敗北\n"
+                msg += "結果: **敗北**\n"
             elif judgement is None:
-                msg += "結果: 引き分け\n"
+                msg += "結果: **引き分け**\n"
             elif judgement is False and disconnected is True:
-                msg += "結果: 敗北（切断）\n"
-            msg += f"ステージ: {stage}\n"
+                msg += "結果: 敗北<small>（切断）</small>\n"
+            msg += f"ステージ: **{stage}**\n"
             if disconnected is False or judgement is True:
-                msg += f"塗りポイント: {points}\n"
-                msg += f"ブキ: {weapon}\n"
+                msg += f"塗りポイント: **{points}**\n"
+                msg += f"ブキ: **{weapon}**\n"
                 if judge_good_guys == "100" or judge_bad_guys == "100":
-                    msg += "ジャッジ: ノックアウト！\n"
+                    msg += "ジャッジ: **ノックアウト！**\n"
                 else:
-                    msg += f"ジャッジ: {judge_good_guys} 対 {judge_bad_guys}\n"
-                msg += f'キル数: {kills}\n'
-                msg += f'アシスト数: {assists}\n'
-                msg += f'デス数: {deaths}\n'
-                msg += f'スペシャル使用数: {specials}'
+                    msg += f"ジャッジ: **{judge_good_guys}** 対 **{judge_bad_guys}**\n"
+                msg += f'キル数: **{kills}**\n'
+                msg += f'アシスト数: **{assists}**\n'
+                msg += f'デス数: **{deaths}**\n'
+                msg += f'スペシャル使用数: **{specials}**\n'
             if disconnected is True and judgement is True:
-                msg += "\n対戦相手/味方が切断したため、負けとしてカウントされませんでした。"
+                msg += "\n<small>対戦相手/味方が切断したため、負けとしてカウントされませんでした。</small>"
             elif disconnected is True and judgement is False:
-                msg += "\n自分が切断したため、負けとしてカウントされました。"
+                msg += "\n**自分が切断したため、負けとしてカウントされました。**"
             elif judgement is None:
-                msg += "\n対戦相手/味方が開始一分以内に切断したため、無効試合となりました。"
+                msg += "\n**対戦相手/味方が開始一分以内に切断したため、無効試合となりました。**"
             self.api.notes_create(text=msg)
             #print(msg)
         elif "coopHistoryDetail" in data[0]["data"]:
@@ -130,7 +130,7 @@ class Module():
                 if wave["eventWave"] is not None:
                     waves[wave["waveNumber"]]["event"] = salmon_event_wave_codes[wave["eventWave"]["name"]]
                 elif data["bossResult"] is not None and data["bossResult"]["hasDefeatBoss"] is True and wave["waveNumber"] == 4:
-                    waves[wave["waveNumber"]]["event"] = "オカシラ襲来（討伐成功）"
+                    waves[wave["waveNumber"]]["event"] = "オカシラ襲来**（討伐成功）**"
                     waves[wave["waveNumber"]]["ikura_norms"] = "n/a"
                     waves[wave["waveNumber"]]["ikura_number"] = "n/a"
                 elif data["bossResult"] is not None and wave["waveNumber"] == 4:
@@ -161,26 +161,26 @@ class Module():
                 waves_num = data["resultWave"]
                 disconnected = False
             msg = "Splatoon3: バイト結果が検出されました。\n"
-            msg += f"日時: {time}\n"
-            msg += f"種別: {gametype}\n"
-            msg += f"スペシャルウェポン: {special}\n"
-            msg += f"終了後レート: {afterrate}\n"
-            msg += f"キケン度: {round(danger * 100, 1)}%\n"
+            msg += f"日時: **{time}**\n"
+            msg += f"種別: **{gametype}**\n"
+            msg += f"スペシャルウェポン: **{special}**\n"
+            msg += f"終了後レート: **{afterrate}**\n"
+            msg += f"キケン度: **{round(danger * 100, 1)}%**\n"
             if failed is True:
-                msg += "結果: 失敗\n"
+                msg += "結果: **失敗**\n"
             elif failed is False:
-                msg += "結果: 成功\n"
-            msg += f"合計納品数: {alleggs}個\n"
-            msg += f"到達ウェーブ: {waves_num}\n"
+                msg += "結果: **成功**\n"
+            msg += f"合計納品数: **{alleggs}個**\n"
+            msg += f"到達ウェーブ: **WAVE{waves_num}**\n"
             for wave in waves.values():
-                msg += f'ウェーブ{wave["wave"]}:\n'
-                msg += f'    ノルマ: {wave["ikura_norms"]}個\n'
-                msg += f'    納品数: {wave["ikura_number"]}個\n'
-                msg += f'    種別: {wave["event"]}\n'
+                msg += f'WAVE{wave["wave"]}:\n'
+                msg += f'    ノルマ: **{wave["ikura_norms"]}個**\n'
+                msg += f'    納品数: **{wave["ikura_number"]}個** ({round(wave["ikura_number"] / wave["ikura_norms"] * 100)}%)\n'
+                msg += f'    種別: **{wave["event"]}**\n'
                 if wave["wave"] == waves_num and failed is True:
-                    msg += f'    失敗理由: {wave["failedreason"]}\n'
+                    msg += f'    失敗理由: **{wave["failedreason"]}**\n'
             if disconnected is True:
-                msg += "\n自分が切断したため、WAVE1失敗としてカウントされました。\n"
+                msg += "\n**自分が切断したため、WAVE1失敗としてカウントされました。**\n"
             if url is not None:
                 msg += f"\n[バトル詳細はこちら]({url})"
             self.api.notes_create(text=msg)
