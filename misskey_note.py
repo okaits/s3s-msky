@@ -131,12 +131,12 @@ class Module():
                     waves[wave["waveNumber"]]["event"] = salmon_event_wave_codes[wave["eventWave"]["name"]]
                 elif data["bossResult"] is not None and data["bossResult"]["hasDefeatBoss"] is True and wave["waveNumber"] == 4:
                     waves[wave["waveNumber"]]["event"] = "オカシラ襲来**（討伐成功）**"
-                    waves[wave["waveNumber"]]["ikura_norms"] = "n/a"
-                    waves[wave["waveNumber"]]["ikura_number"] = "n/a"
+                    waves[wave["waveNumber"]]["ikura_norms"] = None
+                    waves[wave["waveNumber"]]["ikura_number"] = None
                 elif data["bossResult"] is not None and wave["waveNumber"] == 4:
                     waves[wave["waveNumber"]]["event"] = "オカシラ襲来（討伐失敗）"
-                    waves[wave["waveNumber"]]["ikura_norms"] = "n/a"
-                    waves[wave["waveNumber"]]["ikura_number"] = "n/a"
+                    waves[wave["waveNumber"]]["ikura_norms"] = None
+                    waves[wave["waveNumber"]]["ikura_number"] = None
                 else:
                     waves[wave["waveNumber"]]["event"] = "通常"
                 if data["resultWave"] == wave["waveNumber"]:
@@ -175,7 +175,8 @@ class Module():
             for wave in waves.values():
                 msg += f'WAVE{wave["wave"]}:\n'
                 msg += f'    ノルマ: **{wave["ikura_norms"]}個**\n'
-                msg += f'    納品数: **{wave["ikura_number"]}個** ({round(wave["ikura_number"] / wave["ikura_norms"] * 100)}%)\n'
+                if wave["ikura_number"] is not None:
+                    msg += f'    納品数: **{wave["ikura_number"]}個** ({round(int(wave["ikura_number"]) / int(wave["ikura_norms"]) * 100)}%)\n'
                 msg += f'    種別: **{wave["event"]}**\n'
                 if wave["wave"] == waves_num and failed is True:
                     msg += f'    失敗理由: **{wave["failedreason"]}**\n'
