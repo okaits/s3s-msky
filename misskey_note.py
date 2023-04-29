@@ -63,12 +63,17 @@ class Module():
             elif data["judgement"] == "LOSE":
                 judgement = False
                 disconnected = False
+                exempted = False
             elif data["judgement"] == "DEEMED_LOSE":
                 judgement = False
                 disconnected = True
             elif data["judgement"] == "DRAW":
                 judgement = None
                 disconnected = True
+            elif data["judgement"] == "EXEMPTED_LOSE":
+                judgement = False
+                disconnected = False
+                exempted = True
             if data["myTeam"]["result"] is not None:
                 if gametype == "ナワバリバトル":
                     judge_good_guys = str(round(data["myTeam"]["result"]["paintRatio"] * 100, 2)) + "%"
@@ -82,12 +87,14 @@ class Module():
             msg += f"種別: **{gametype}**\n"
             if judgement is True:
                 msg += "結果: **勝利**\n"
-            elif judgement is False and disconnected is False:
+            elif judgement is False and disconnected is False and exempted is False:
                 msg += "結果: **敗北**\n"
             elif judgement is None:
                 msg += "結果: **引き分け**\n"
             elif judgement is False and disconnected is True:
-                msg += "結果: 敗北<small>（切断）</small>\n"
+                msg += "結果: **敗北**<small>（切断）</small>\n"
+            elif judgement is False and exempted is True:
+                msg += "結果: **敗北**<small>（免除）</small>\n"
             msg += f"ステージ: **{stage}**\n"
             if disconnected is False or judgement is True:
                 msg += f"塗りポイント: **{points}**\n"
@@ -106,6 +113,8 @@ class Module():
                 msg += "\n**自分が切断したため、負けとしてカウントされました。**"
             elif judgement is None:
                 msg += "\n**対戦相手/味方が開始一分以内に切断したため、無効試合となりました。**"
+            elif exempted is True:
+                msg += "\n**対戦相手/味方が切断したため、敗北が免除されました。**"
             self.api.notes_create(text=msg)
             #print(msg)
         elif "coopHistoryDetail" in data[0]["data"]:
