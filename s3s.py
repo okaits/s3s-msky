@@ -1271,8 +1271,9 @@ def post_result(data, ismonitoring, isblackout, istestrun, overview_data=None):
 		else: # 200 OK
 			print(f"{utils.set_noun(which)[:-1].capitalize()} uploaded to {headerloc}")
 	# modules
-	for module in modules_list:
-		module.post(results, headerloc)
+	if (not time_uploaded <= time_now - 7) or force_module is True:
+		for module in modules_list:
+			module.post(results, headerloc)
 
 
 def check_for_updates():
@@ -1785,6 +1786,8 @@ def parse_arguments():
 	parser.add_argument("--skipprefetch", required=False, action="store_true", help=argparse.SUPPRESS)
 	parser.add_argument("--skipmodule", required=False, action="append", default=[],
 		help="Skip module(s)")
+	parser.add_argument("--force-module", required=False, action="store_true", default=False,
+		help="Always run modules.")
 	return parser.parse_args()
 
 
@@ -1819,10 +1822,12 @@ def main():
 
 	# init modules
 	global modules_list
+	global force_module
 	modules_list = []
 	for module in modules:
 		if module.__name__ not in parser_result.skipmodule:
 			modules_list.append(module.Module())
+	force_module = parser_result.force_module
 
 	# i/o checks
 	############
