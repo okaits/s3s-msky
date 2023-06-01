@@ -67,6 +67,7 @@ class Module():
             if data["judgement"] == "WIN":
                 judgement = True
                 disconnected = False
+                exempted=False
             elif data["judgement"] == "LOSE":
                 judgement = False
                 disconnected = False
@@ -126,7 +127,7 @@ class Module():
             elif judgement is None:
                 msg += "\n**対戦相手/味方が開始一分以内に切断したため、無効試合となりました。**"
             elif exempted is True:
-                msg += "\n**対戦相手/味方が切断したため、敗北が免除されました。**"
+                msg += "\n<small>対戦相手/味方が切断したため、敗北が免除されました。</small>"
             if url is not None:
                 msg += f"\n[バトル詳細はこちら]({url})"
             self.api.notes_create(text=msg)
