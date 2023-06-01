@@ -15,7 +15,7 @@ import iksm, utils
 import misskey_note
 modules = [misskey_note] # modules list
 
-A_VERSION = "0.4.0"
+A_VERSION = "0.4.2"
 
 DEBUG = False
 
@@ -258,6 +258,10 @@ def fetch_json(which, separate=False, exportall=False, specific=False, numbers_o
 				cookies=dict(_gtoken=GTOKEN))
 			query1_resp = json.loads(query1.text)
 			swim()
+
+			if not query1_resp.get("data"): # catch error
+				print("\nSomething's wrong with one of the query hashes. Ensure s3s is up-to-date, and if this message persists, please open an issue on GitHub.")
+				sys.exit(1)
 
 			# ink battles - latest 50 of any type
 			if "latestBattleHistories" in query1_resp["data"]:
