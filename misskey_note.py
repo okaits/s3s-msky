@@ -38,6 +38,13 @@ class Module():
             data = data[0]["data"]["vsHistoryDetail"]
             time = dateparser.isoparse(data["playedTime"]).astimezone(tz=datetz.gettz("Asia/Tokyo")).strftime("%Y/%m/%d %H:%M:%S JST (24時間表記)")
             gametype = data["vsRule"]["name"]
+            mode = data["vsMode"]["mode"]
+            if mode == "FEST":
+                gametype = f"{gametype} (フェス)"
+                contribution = data["festMatch"]["contribution"]
+                festpower = data["festMatch"]["myFestPower"]
+                if festpower == None:
+                    festpower = 0
             if data["vsRule"]["rule"] == "TRI_COLOR":
                 #TODO
                 raise Exception("Not implemented.")
@@ -67,15 +74,17 @@ class Module():
             elif data["judgement"] == "DEEMED_LOSE":
                 judgement = False
                 disconnected = True
+                exempted = False
             elif data["judgement"] == "DRAW":
                 judgement = None
                 disconnected = True
+                exempted=False
             elif data["judgement"] == "EXEMPTED_LOSE":
                 judgement = False
                 disconnected = False
                 exempted = True
             if data["myTeam"]["result"] is not None:
-                if gametype == "ナワバリバトル":
+                if gametype.startswith("ナワバリバトル"):
                     judge_good_guys = str(round(data["myTeam"]["result"]["paintRatio"] * 100, 2)) + "%"
                     judge_bad_guys = str(round(data["otherTeams"][0]["result"]["paintRatio"] * 100, 2)) + "%"
                 else:
@@ -107,6 +116,9 @@ class Module():
                 msg += f'アシスト数: **{assists}**\n'
                 msg += f'デス数: **{deaths}**\n'
                 msg += f'スペシャル使用数: **{specials}**\n'
+            if mode == "FEST":
+                msg += f"累計貢献度: **{contribution}**\n"
+                msg += f"フェスパワー: **{festpower}**\n"
             if disconnected is True and judgement is True:
                 msg += "\n<small>対戦相手/味方が切断したため、負けとしてカウントされませんでした。</small>"
             elif disconnected is True and judgement is False:
