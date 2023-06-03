@@ -28,6 +28,7 @@ class Module():
             print("Couldn't find config file. Creating it...")
             self._create_config()
         self.api = misskey.Misskey(address=self.server, i=self.api_token)
+        print(f"[misskey_note] Logged in as: {self.api.i()['name']}\n")
 
     def pre(self, result):
         pass
@@ -229,7 +230,7 @@ class Module():
     def _create_config(self):
         """ Ask user to enter server URL and api key. """
         self.server = input("Misskey Server URL: ")
-        auth = misskey.MiAuth(self.server, name="s3s with misskey")
+        auth = misskey.MiAuth(self.server, name="s3s with misskey", permission=["read:account", "write:notes"])
         print(f"Please login into your server here: {auth.generate_url()}")
         input("Press Enter to continue.")
         self.api_token = auth.check()
