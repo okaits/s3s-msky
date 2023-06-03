@@ -203,9 +203,15 @@ class Module():
             elif failed is False:
                 msg += "結果: **成功**\n"
             msg += f"合計納品数: **{alleggs}個**\n"
-            msg += f"到達ウェーブ: **WAVE{waves_num}**\n"
+            if waves_num == 4:
+                msg += "到達ウェーブ: **EX-WAVE**\n"
+            else:
+                msg += f"到達ウェーブ: **WAVE{waves_num}**\n"
             for wave in waves.values():
-                msg += f'WAVE{wave["wave"]}:\n'
+                if wave["wave"] == 4:
+                    msg += 'EX-WAVE:\n'
+                else:
+                    msg += f'WAVE{wave["wave"]}:\n'
                 msg += f'    ノルマ: **{wave["ikura_norms"]}個**\n'
                 if wave["ikura_number"] is not None:
                     msg += f'    納品数: **{wave["ikura_number"]}個** ({round(int(wave["ikura_number"]) / int(wave["ikura_norms"]) * 100)}%)\n'
