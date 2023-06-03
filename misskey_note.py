@@ -34,11 +34,16 @@ class Module():
 
     def post(self, data: list, url: str):
         """ Note to misskey server """
+
         if "vsHistoryDetail" in data[0]["data"]:
             data = data[0]["data"]["vsHistoryDetail"]
             time = dateparser.isoparse(data["playedTime"]).astimezone(tz=datetz.gettz("Asia/Tokyo")).strftime("%Y/%m/%d %H:%M:%S JST (24時間表記)")
             gametype = data["vsRule"]["name"]
             mode = data["vsMode"]["mode"]
+            if mode == "LEAGUE":
+                gametype = f"{gametype} (イベントマッチ)"
+                leaguepower = data["leagueMatch"]["myLeaguePower"]
+                leagueevent = data["leagueMatch"]["leagueMatchEvent"]["name"]
             if mode == "FEST":
                 gametype = f"{gametype} (フェス)"
                 contribution = data["festMatch"]["contribution"]
@@ -109,7 +114,7 @@ class Module():
             if disconnected is False or judgement is True:
                 msg += f"塗りポイント: **{points}**\n"
                 msg += f"ブキ: **{weapon}**\n"
-                if judge_good_guys == "100" or judge_bad_guys == "100":
+                if judge_good_guys == "100カウント" or judge_bad_guys == "100カウント8":
                     msg += "ジャッジ: **ノックアウト！**\n"
                 else:
                     msg += f"ジャッジ: **{judge_good_guys}** 対 **{judge_bad_guys}**\n"
@@ -120,6 +125,9 @@ class Module():
             if mode == "FEST":
                 msg += f"累計貢献度: **{contribution}**\n"
                 msg += f"フェスパワー: **{festpower}**\n"
+            if mode == "LEAGUE":
+                msg += f"イベントパワー: **{leaguepower}**\n"
+                msg += f"参加イベント: **{leagueevent}**\n"
             if disconnected is True and judgement is True:
                 msg += "\n<small>対戦相手/味方が切断したため、負けとしてカウントされませんでした。</small>"
             elif disconnected is True and judgement is False:
