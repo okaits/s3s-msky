@@ -58,12 +58,21 @@ class Module():
                 for player in data["myTeam"]["players"]:
                     if player["isMyself"] is True:
                         me = player
-                kills = me["result"]["kill"]
-                assists = me["result"]["assist"]
-                deaths = me["result"]["death"]
-                specials = me["result"]["special"]
-                weapon = me["weapon"]["name"]
-                points = me["paint"]
+                try:
+                    kills = me["result"]["kill"]
+                    assists = me["result"]["assist"]
+                    deaths = me["result"]["death"]
+                    specials = me["result"]["special"]
+                    weapon = me["weapon"]["name"]
+                    points = me["paint"]
+                except TypeError:
+                    # Maybe disconnected
+                    kills = 0
+                    assits = 0
+                    deaths = 0
+                    specials = 0
+                    weapon = 0
+                    points = 0
             except KeyError:
                 me = {}
                 kills = 0
