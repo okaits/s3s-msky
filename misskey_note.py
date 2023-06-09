@@ -6,7 +6,7 @@ import misskey  # pylint: disable=E0401
 import os
 
 salmon_sp_codes = {"Triple Inkstrike": "トリプルトルネード", "Crab Tank": "カニタンク", "Booyah Bomb": "ナイスダマ", "Killer Wail 5.1": "メガホンレーザー5.1ch", "Inkjet": "ジェットパック", "Reefslider": "サメライド", "Wave Breaker": "ホップソナー"}
-salmon_rate_codes = {"Apprentice": "かけだし", "Part-Timer": "はんにんまえ", "Profeshional": "たつじん", "Profeshional +1": "たつじん +1", "Profeshional +2": "たつじん +2", "Profeshional +3": "たつじん +3", "Go-Getter": "いちにんまえ", "Overachiver": "じゅくれん", "Eggsecutive VP": "でんせつ"}
+salmon_rate_codes = {"Apprentice": "かけだし", "Part-Timer": "はんにんまえ", "Profreshional": "たつじん", "Profreshional +1": "たつじん +1", "Profreshional +2": "たつじん +2", "Profreshional +3": "たつじん +3", "Go-Getter": "いちにんまえ", "Overachiver": "じゅくれん", "Eggsecutive VP": "でんせつ"}
 salmon_event_wave_codes = {"Rush": "ヒカリバエ（ラッシュ）", "Goldie Seeking": "金シャケ探し", "The Griller": "グリル", "The Mothership": "ハコビヤ襲来", "Fog": "霧", "Cohock Charge": "ドスコイの群れ", "Giant Tornado": "竜巻", "Mudmouth Eruptions": "ドロシャケ"}
 salmon_gametype_codes = {"REGULAR": "通常", "TEAM_CONTEST": "バイトチームコンテスト"}
 
