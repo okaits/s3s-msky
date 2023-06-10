@@ -221,7 +221,8 @@ class Module():
                 if wave["wave"] == 4:
                     msg += 'EX-WAVE:\n'
                 else:
-                    msg += f'WAVE{wave["wave"]}:\n'
+                    if wave["ikura_norms"] is not None:
+                        msg += f'WAVE{wave["wave"]}:\n'
                 msg += f'    ノルマ: **{wave["ikura_norms"]}個**\n'
                 if wave["ikura_number"] is not None:
                     msg += f'    納品数: **{wave["ikura_number"]}個** ({round(int(wave["ikura_number"]) / int(wave["ikura_norms"]) * 100)}%)\n'
