@@ -152,6 +152,7 @@ class Module():
             #print(msg)
         elif "coopHistoryDetail" in data[0]["data"]:
             data = data[0]["data"]["coopHistoryDetail"]
+            print(data) #DEBUG
             time = dateparser.isoparse(data["playedTime"]).astimezone(tz=datetz.gettz("Asia/Tokyo")).strftime("%Y/%m/%d %H:%M:%S JST (24時間表記)")
             gametype = salmon_gametype_codes[data["rule"]]
             danger = data["dangerRate"]
@@ -172,7 +173,7 @@ class Module():
                 if wave["eventWave"] is not None:
                     waves[wave["waveNumber"]]["event"] = salmon_event_wave_codes[wave["eventWave"]["name"]]
                 elif data["bossResult"] is not None and data["bossResult"]["hasDefeatBoss"] is True and wave["waveNumber"] == 4:
-                    waves[wave["waveNumber"]]["event"] = "オカシラ襲来**（討伐成功）**"
+                    waves[wave["waveNumber"]]["event"] = "オカシラ襲来（討伐成功）"
                     waves[wave["waveNumber"]]["ikura_norms"] = None
                     waves[wave["waveNumber"]]["ikura_number"] = None
                 elif data["bossResult"] is not None and wave["waveNumber"] == 4:
@@ -221,9 +222,9 @@ class Module():
                 if wave["wave"] == 4:
                     msg += 'EX-WAVE:\n'
                 else:
-                    if wave["ikura_norms"] is not None:
-                        msg += f'WAVE{wave["wave"]}:\n'
-                msg += f'    ノルマ: **{wave["ikura_norms"]}個**\n'
+                    msg += f'WAVE{wave["wave"]}:\n'
+                if wave["ikura_norms"] is not None:
+                    msg += f'    ノルマ: **{wave["ikura_norms"]}個**\n'
                 if wave["ikura_number"] is not None:
                     msg += f'    納品数: **{wave["ikura_number"]}個** ({round(int(wave["ikura_number"]) / int(wave["ikura_norms"]) * 100)}%)\n'
                 msg += f'    種別: **{wave["event"]}**\n'
@@ -233,8 +234,8 @@ class Module():
                 msg += "\n**自分が切断したため、WAVE1失敗としてカウントされました。**\n"
             if url is not None:
                 msg += f"\n[バトル詳細はこちら]({url})"
-            self.api.notes_create(text=msg)
-            #print(msg)
+            #self.api.notes_create(text=msg)
+            print(msg) #DEBUG
 
 
     def _create_config(self):
