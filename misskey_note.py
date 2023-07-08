@@ -150,7 +150,14 @@ class Module():
                 msg += "\n<small>対戦相手/味方が切断したため、敗北が免除されました。</small>"
             if url is not None:
                 msg += f"\n[バトル詳細はこちら]({url})"
-            self.api.notes_create(text=msg, cw=header)
+            while True:
+                try:
+                    self.api.notes_create(text=msg, cw=header)
+                except misskey.exceptions.MisskeyAPIException:
+                    time.sleep(10)
+                    continue
+                else:
+                    break
             #print(msg)
         elif "coopHistoryDetail" in data[0]["data"]:
             data = data[0]["data"]["coopHistoryDetail"]
@@ -236,7 +243,14 @@ class Module():
                 msg += "\n**自分が切断したため、WAVE1失敗としてカウントされました。**\n"
             if url is not None:
                 msg += f"\n[バトル詳細はこちら]({url})"
-            self.api.notes_create(text=msg, cw=header)
+            while True:
+                try:
+                    self.api.notes_create(text=msg, cw=header)
+                except misskey.exceptions.MisskeyAPIException:
+                    time.sleep(10)
+                    continue
+                else:
+                    break
             #print(msg) #DEBUG
 
 
