@@ -107,15 +107,15 @@ class Module():
                     judge_good_guys = str(data["myTeam"]["result"]["score"]) + "カウント"
                     judge_bad_guys = str(data["otherTeams"][0]["result"]["score"]) + "カウント"
             stage = data["vsStage"]["name"]
-            msg = "Splatoon3: バトルが検出されました。\n"
-            msg += f"日時: **{time}**\n"
+            header = "Splatoon3: バトル結果\n"
+            msg = f"日時: **{time}**\n"
             msg += f"種別: **{gametype}**\n"
             if judgement is True:
-                msg += "結果: **勝利**\n"
+                msg += "結果: $[fg.color=ff0000 **勝利**]\n"
             elif judgement is False and disconnected is False and exempted is False:
-                msg += "結果: **敗北**\n"
+                msg += "結果: $[fg.color=0000ff **敗北**]\n"
             elif judgement is None:
-                msg += "結果: **引き分け**\n"
+                msg += "結果: $[fg.color=00ff00 **引き分け**]\n"
             elif judgement is False and disconnected is True:
                 msg += "結果: **敗北**<small>（切断）</small>\n"
             elif judgement is False and exempted is True:
@@ -124,8 +124,10 @@ class Module():
             if disconnected is False or judgement is True:
                 msg += f"塗りポイント: **{points}**\n"
                 msg += f"ブキ: **{weapon}**\n"
-                if judge_good_guys == "100カウント" or judge_bad_guys == "100カウント8":
-                    msg += "ジャッジ: **ノックアウト！**\n"
+                if judge_good_guys == "100カウント":
+                    msg += "ジャッジ: $[fg.color=ff0000 **ノックアウト！**]\n"
+                elif judge_bad_guys == "100カウント":
+                    msg += "ジャッジ: $[fg.color=0000ff **ノックアウト！**]\n"
                 else:
                     msg += f"ジャッジ: **{judge_good_guys}** 対 **{judge_bad_guys}**\n"
                 msg += f'キル数: **{kills}**\n'
@@ -148,11 +150,11 @@ class Module():
                 msg += "\n<small>対戦相手/味方が切断したため、敗北が免除されました。</small>"
             if url is not None:
                 msg += f"\n[バトル詳細はこちら]({url})"
-            self.api.notes_create(text=msg)
+            self.api.notes_create(text=msg, cw=header)
             #print(msg)
         elif "coopHistoryDetail" in data[0]["data"]:
             data = data[0]["data"]["coopHistoryDetail"]
-            print(data) #DEBUG
+            #print(data) #DEBUG
             time = dateparser.isoparse(data["playedTime"]).astimezone(tz=datetz.gettz("Asia/Tokyo")).strftime("%Y/%m/%d %H:%M:%S JST (24時間表記)")
             gametype = salmon_gametype_codes[data["rule"]]
             danger = data["dangerRate"]
@@ -203,8 +205,8 @@ class Module():
                 failed = True
                 waves_num = data["resultWave"]
                 disconnected = False
-            msg = "Splatoon3: バイト結果が検出されました。\n"
-            msg += f"日時: **{time}**\n"
+            header = "Splatoon3: サーモンランNW バイト結果\n"
+            msg = f"日時: **{time}**\n"
             msg += f"種別: **{gametype}**\n"
             msg += f"スペシャルウェポン: **{special}**\n"
             msg += f"終了後レート: **{afterrate}**\n"
@@ -234,8 +236,8 @@ class Module():
                 msg += "\n**自分が切断したため、WAVE1失敗としてカウントされました。**\n"
             if url is not None:
                 msg += f"\n[バトル詳細はこちら]({url})"
-            #self.api.notes_create(text=msg)
-            print(msg) #DEBUG
+            self.api.notes_create(text=msg, cw=header)
+            #print(msg) #DEBUG
 
 
     def _create_config(self):
