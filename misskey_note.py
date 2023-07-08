@@ -4,6 +4,7 @@ import dateutil.parser as dateparser
 import dateutil.tz as datetz
 import misskey  # pylint: disable=E0401
 import os
+from time import sleep
 
 salmon_sp_codes = {"Triple Inkstrike": "トリプルトルネード", "Crab Tank": "カニタンク", "Booyah Bomb": "ナイスダマ", "Killer Wail 5.1": "メガホンレーザー5.1ch", "Inkjet": "ジェットパック", "Reefslider": "サメライド", "Wave Breaker": "ホップソナー"}
 salmon_rate_codes = {"Apprentice": "かけだし", "Part-Timer": "はんにんまえ", "Profreshional": "たつじん", "Profreshional +1": "たつじん +1", "Profreshional +2": "たつじん +2", "Profreshional +3": "たつじん +3", "Go-Getter": "いちにんまえ", "Overachiver": "じゅくれん", "Eggsecutive VP": "でんせつ"}
@@ -154,7 +155,7 @@ class Module():
                 try:
                     self.api.notes_create(text=msg, cw=header)
                 except misskey.exceptions.MisskeyAPIException:
-                    time.sleep(10)
+                    sleep(10)
                     continue
                 else:
                     break
@@ -247,7 +248,7 @@ class Module():
                 try:
                     self.api.notes_create(text=msg, cw=header)
                 except misskey.exceptions.MisskeyAPIException:
-                    time.sleep(10)
+                    sleep(10)
                     continue
                 else:
                     break
