@@ -1230,7 +1230,7 @@ def post_result(data, ismonitoring, isblackout, istestrun, overview_data=None):
 			payload.get("private") == "yes" and utils.custom_key_exists("ignore_private_jobs", CONFIG_DATA): # SR version
 			continue
 
-		s3s_values = {'agent': '\u0073\u0033\u0073', 'agent_version': f'v{A_VERSION}'} # lol
+		s3s_values = {'agent': '\u0073\u0033\u0073\u002d\u006d\u0073\u006b\u0079', 'agent_version': f'v{A_VERSION}'} # lol
 		s3s_values["agent_variables"] = {'Upload Mode': "Monitoring" if ismonitoring else "Manual"}
 		payload.update(s3s_values)
 
