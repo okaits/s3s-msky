@@ -43,9 +43,14 @@ class Module():
 
         if "vsHistoryDetail" in data[0]["data"]:
             data = data[0]["data"]["vsHistoryDetail"]
+            #print(json.dumps(data)) #DEBUG
             time = dateparser.isoparse(data["playedTime"]).astimezone(tz=datetz.gettz("Asia/Tokyo")).strftime("%Y/%m/%d %H:%M:%S JST (24時間表記)")
             gametype = data["vsRule"]["name"]
             mode = data["vsMode"]["mode"]
+            my_color = f"{str(int(data['myTeam']['color']['r']*100))}{str(int(data['myTeam']['color']['g']*100))}{str(int(data['myTeam']['color']['b']*100))}"
+            enemy_color = []
+            for enemy in data['otherTeams']:
+                enemy_color.append(f"{str(int(enemy['color']['r']*100))}{str(int(enemy['color']['g']*100))}{str(int(enemy['color']['b']*100))}")
             if mode == "LEAGUE":
                 gametype = f"{gametype} (イベントマッチ)"
                 leaguepower = data["leagueMatch"]["myLeaguePower"]
@@ -53,6 +58,7 @@ class Module():
             if mode == "FEST":
                 gametype = f"{gametype} (フェス)"
                 contribution = data["festMatch"]["contribution"]
+                festteam = data["myTeam"]["festTeamName"]
                 festpower = data["festMatch"]["myFestPower"]
                 if festpower == None:
                     festpower = 0
@@ -130,17 +136,18 @@ class Module():
                 msg += f"塗りポイント: **{points}**\n"
                 msg += f"ブキ: **{weapon}**\n"
                 if judge_good_guys == "100カウント":
-                    msg += "ジャッジ: $[fg.color=ff0000 **ノックアウト！**]\n"
+                    msg += f"ジャッジ: $[fg.color={my_color} **ノックアウト！**]\n"
                 elif judge_bad_guys == "100カウント":
-                    msg += "ジャッジ: $[fg.color=0000ff **ノックアウト！**]\n"
+                    msg += f"ジャッジ: $[fg.color={enemy_color[0]} **ノックアウト！**]\n"
                 else:
-                    msg += f"ジャッジ: **{judge_good_guys}** 対 **{judge_bad_guys}**\n"
+                    msg += f"ジャッジ: $[fg.color={my_color} **{judge_good_guys}**] 対 $[fg.color={enemy_color[0]} **{judge_bad_guys}**]\n"
                 msg += f'キル数: **{kills}**\n'
                 msg += f'アシスト数: **{assists}**\n'
                 msg += f'デス数: **{deaths}**\n'
                 msg += f'スペシャル使用数: **{specials}**\n'
             if mode == "FEST":
-                msg += f"累計貢献度: **{contribution}**\n"
+                msg += f"フェス陣営: $[fg.color={my_color} **{festteam}**]\n"
+                msg += f"貢献度: **{contribution}**\n"
                 msg += f"フェスパワー: **{festpower}**\n"
             if mode == "LEAGUE":
                 msg += f"イベントパワー: **{leaguepower}**\n"
@@ -187,11 +194,11 @@ class Module():
                 if wave["eventWave"] is not None:
                     waves[wave["waveNumber"]]["event"] = salmon_event_wave_codes[wave["eventWave"]["name"]]
                 elif data["bossResult"] is not None and data["bossResult"]["hasDefeatBoss"] is True and wave["waveNumber"] == 4:
-                    waves[wave["waveNumber"]]["event"] = "オカシラ襲来（討伐成功）"
+                    waves[wave["waveNumber"]]["event"] = "オカシラ襲来$[fg.color=00ff00 $[shake （討伐成功）]]"
                     waves[wave["waveNumber"]]["ikura_norms"] = None
                     waves[wave["waveNumber"]]["ikura_number"] = None
                 elif data["bossResult"] is not None and wave["waveNumber"] == 4:
-                    waves[wave["waveNumber"]]["event"] = "オカシラ襲来（討伐失敗）"
+                    waves[wave["waveNumber"]]["event"] = "オカシラ襲来$[fg.color=ff0000 （討伐失敗）]"
                     waves[wave["waveNumber"]]["ikura_norms"] = None
                     waves[wave["waveNumber"]]["ikura_number"] = None
                 else:
@@ -224,23 +231,27 @@ class Module():
             msg += f"終了後レート: **{afterrate}**\n"
             msg += f"キケン度: **{round(danger * 100, 1)}%**\n"
             if failed is True:
-                msg += "結果: **失敗**\n"
+                msg += "結果: $[fg.color=ff7b00 **失敗**]\n"
             elif failed is False:
-                msg += "結果: **成功**\n"
-            msg += f"合計納品数: **{alleggs}個**\n"
-            if waves_num == 4:
-                msg += "到達ウェーブ: **EX-WAVE**\n"
+                msg += "結果: $[fg.color=00ff00 **成功**]\n"
+            if alleggs >= 100:
+                msg += f"合計納品数: $[fg.color=00ff00 $[shake **{alleggs}個**]]\n"
+            if waves_num == 4 and data["rule"] != "TEAM_CONTEST":
+                msg += "到達ウェーブ: $[shake **EX-WAVE**]\n"
             else:
                 msg += f"到達ウェーブ: **WAVE{waves_num}**\n"
             for wave in waves.values():
-                if wave["wave"] == 4:
+                if wave["wave"] == 4 and data["rule"] != "TEAM_CONTEST":
                     msg += 'EX-WAVE:\n'
                 else:
                     msg += f'WAVE{wave["wave"]}:\n'
                 if wave["ikura_norms"] is not None:
                     msg += f'    ノルマ: **{wave["ikura_norms"]}個**\n'
                 if wave["ikura_number"] is not None:
-                    msg += f'    納品数: **{wave["ikura_number"]}個** ({round(int(wave["ikura_number"]) / int(wave["ikura_norms"]) * 100)}%)\n'
+                    if wave["ikura_norms"] <= wave['ikura_number']:
+                        msg += f'    納品数: $[fg.color=0000ff **{wave["ikura_number"]}個**] ($[fg.color=0000ff {round(int(wave["ikura_number"]) / int(wave["ikura_norms"]) * 100)}%])\n'
+                    else:
+                        msg += f'    納品数: $[fg.color=ff7b00 **{wave["ikura_number"]}個**] ($[fg.color=ff0000 {round(int(wave["ikura_number"]) / int(wave["ikura_norms"]) * 100)}%])\n'
                 msg += f'    種別: **{wave["event"]}**\n'
                 if wave["wave"] == waves_num and failed is True:
                     msg += f'    失敗理由: **{wave["failedreason"]}**\n'
