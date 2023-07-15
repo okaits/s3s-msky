@@ -6,6 +6,10 @@ import misskey  # pylint: disable=E0401
 import os
 from time import sleep
 
+if os.name == 'nt':
+    import locale
+    locale.setlocale(locale.LC_CTYPE, "Japanese_Japan.932")
+
 salmon_sp_codes = {"Triple Inkstrike": "トリプルトルネード", "Crab Tank": "カニタンク", "Booyah Bomb": "ナイスダマ", "Killer Wail 5.1": "メガホンレーザー5.1ch", "Inkjet": "ジェットパック", "Reefslider": "サメライド", "Wave Breaker": "ホップソナー"}
 salmon_rate_codes = {"Apprentice": "かけだし", "Part-Timer": "はんにんまえ", "Profreshional": "たつじん", "Profreshional +1": "たつじん +1", "Profreshional +2": "たつじん +2", "Profreshional +3": "たつじん +3", "Go-Getter": "いちにんまえ", "Overachiver": "じゅくれん", "Eggsecutive VP": "でんせつ"}
 salmon_event_wave_codes = {"Rush": "ヒカリバエ（ラッシュ）", "Goldie Seeking": "金シャケ探し", "The Griller": "グリル", "The Mothership": "ハコビヤ襲来", "Fog": "霧", "Cohock Charge": "ドスコイの群れ", "Giant Tornado": "竜巻", "Mudmouth Eruptions": "ドロシャケ"}
